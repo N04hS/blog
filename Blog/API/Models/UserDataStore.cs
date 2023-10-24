@@ -21,25 +21,29 @@ public class UserDataStore
                         Id = 1,
                         Title = "Titel",
                         Content = "Inhalt",
+                        TimeOfCreation = DateTime.Parse("24.10.2023 10:26"),
                         Comments = new List<CommentDto>()
                         {
                             new CommentDto()
                             {
                                 Id = 1,
                                 AuthorId = 2,
-                                Content = "Tobias war hier"
+                                Content = "Tobias war hier",
+                                TimeOfCreation = DateTime.Parse("24.10.2023 10:45")
                             },
                             new CommentDto()
                             {
                                 Id = 2,
                                 AuthorId = 3,
-                                Content = "Adrian war hier"
+                                Content = "Adrian war hier",
+                                TimeOfCreation = DateTime.Parse("24.10.2023 10:53")
                             },
                             new CommentDto()
                             {
                                 Id = 3,
                                 AuthorId = 2,
-                                Content = "Tobias war nochmal hier"
+                                Content = "Tobias war nochmal hier",
+                                TimeOfCreation = DateTime.Parse("24.10.2023 11:17")
                             }
                         }
                     }
