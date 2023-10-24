@@ -8,6 +8,22 @@ namespace Blog.Controllers;
 public class PostController : ControllerBase
 {
     [HttpGet]
+    public ActionResult<IEnumerable<PostDto>> GetPosts()
+    {
+        var posts = new LinkedList<PostDto>();
+        var users = UserDataStore.Current.Users;
+
+        foreach (var u in users)
+        {
+            foreach (var p in u.Posts) 
+            {
+                posts.Append(p);
+            }
+        }
+        
+        return Ok(posts);
+    }
+    [HttpGet("{userId}")]
     public ActionResult<IEnumerable<PostDto>> GetPosts(int userId)
     {
         var user = UserDataStore.Current.Users.FirstOrDefault(u => u.Id == userId);
@@ -18,7 +34,7 @@ public class PostController : ControllerBase
         return Ok(user.Posts);
     }
 
-    [HttpGet("{postId}")]
+    [HttpGet("{userId}/{postId}")]
     public ActionResult<IEnumerable<PostDto>> GetPost(int userId, int postId)
     {
         /*

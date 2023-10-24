@@ -7,6 +7,7 @@ public class PostDto
     public string Title { get; set; } = string.Empty;
     public string Content { get; set; } = string.Empty;
 
+    public DateTime TimeOfCreation { get; set; }
     public int NumberOfComments => Comments.Count;
     public ICollection<CommentDto> Comments { get; set; }
         = new List<CommentDto>();
