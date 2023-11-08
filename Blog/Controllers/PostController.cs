@@ -1,4 +1,5 @@
 ﻿using Blog.API.Models;
+using Microsoft.AspNetCore.JsonPatch;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Blog.Controllers;
@@ -99,6 +100,31 @@ public class PostController : ControllerBase
 
         postFromStore.Title = updatedPost.Title;
         postFromStore.Content = updatedPost.Content;
+
+        return NoContent();
+    }
+
+    [HttpPatch("{postId}")]
+    public ActionResult PartiallyUpdatePost(int postId, JsonPatchDocument<PostForUpdateDto> patchDocument)
+    {
+        var postFromStore = PostDataStore.Current.Posts.FirstOrDefault(p => p.Id == postId);
+
+        if (postFromStore == null)
+            return NotFound();
+
+        var postToPatch = new PostForUpdateDto()
+        {
+            Title = postFromStore.Title,
+            Content = postFromStore.Content
+        };
+
+        patchDocument.ApplyTo(postToPatch, ModelState);
+
+        if (!ModelState.IsValid)
+            return BadRequest(ModelState);
+
+        postFromStore.Title = postToPatch.Title;
+        postFromStore.Content = postToPatch.Content;
 
         return NoContent();
     }
