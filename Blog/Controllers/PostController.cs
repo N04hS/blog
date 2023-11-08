@@ -69,7 +69,7 @@ public class PostController : ControllerBase
         if (author == null)
             return NotFound();
 
-        var maxPostId = PostDataStore.Current.Posts.Count();
+        var maxPostId = PostDataStore.Current.Posts.Count;
 
         var finalPost = new PostDto()
         {
