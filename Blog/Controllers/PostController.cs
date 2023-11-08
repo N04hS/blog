@@ -123,6 +123,9 @@ public class PostController : ControllerBase
         if (!ModelState.IsValid)
             return BadRequest(ModelState);
 
+        if (!TryValidateModel(postToPatch))
+            return BadRequest(ModelState);
+
         postFromStore.Title = postToPatch.Title;
         postFromStore.Content = postToPatch.Content;
 
