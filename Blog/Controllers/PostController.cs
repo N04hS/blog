@@ -15,7 +15,7 @@ public class PostController : ControllerBase
         return Ok(allPosts);
     }
 
-    [HttpGet("{userId}")]
+    [HttpGet("{userId}", Name = "GetPosts")]
     public ActionResult<IEnumerable<PostDto>> GetPosts(int userId)
     {
         /* get all posts from store */
@@ -69,7 +69,6 @@ public class PostController : ControllerBase
         if (author == null)
             return NotFound();
 
-        //var posts = PostDataStore.Current.Posts.Where(p => p.AuthorId == authorId);
         var maxPostId = PostDataStore.Current.Posts.Count();
 
         var finalPost = new PostDto()
@@ -82,34 +81,11 @@ public class PostController : ControllerBase
 
         PostDataStore.Current.Posts.Add(finalPost);
 
-        // TODO check with Stefan
         return CreatedAtRoute("GetPosts",
             new
             {
-                postId = finalPost.Id
+                userId = authorId
             },
             finalPost);
-
-        // patchwork solution for now TODO fix later
-        /*
-        var maxPostId = author.Posts.Count;
-
-        var finalPost = new PostDto()
-        {
-            Id = ++maxPostId,
-            Title = post.Title,
-            Content = post.Content,
-            TimeOfCreation = DateTime.Now,
-            Comments = new List<CommentDto>()
-        };
-
-        author.Posts.Add(finalPost);
-
-        return CreatedAtRoute("GetPosts",
-            new
-            {
-                postId = finalPost.Id
-            },
-            finalPost); */
     }
 }
