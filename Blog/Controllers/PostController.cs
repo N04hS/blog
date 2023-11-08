@@ -131,4 +131,17 @@ public class PostController : ControllerBase
 
         return NoContent();
     }
+
+    [HttpDelete("{postId}")]
+    public ActionResult DeletePost(int postId)
+    {
+        var postFromStore = PostDataStore.Current.Posts.FirstOrDefault(p => p.Id == postId);
+
+        if (postFromStore == null)
+            return NotFound();
+
+        PostDataStore.Current.Posts.Remove(postFromStore);
+
+        return NoContent();
+    }
 }
