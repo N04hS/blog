@@ -88,4 +88,18 @@ public class PostController : ControllerBase
             },
             finalPost);
     }
+
+    [HttpPut("{postId}")]
+    public ActionResult UpdatePost(int postId, PostForUpdateDto updatedPost)
+    {
+        var postFromStore = PostDataStore.Current.Posts.FirstOrDefault(p => p.Id == postId);
+
+        if (postFromStore == null)
+            return NotFound();
+
+        postFromStore.Title = updatedPost.Title;
+        postFromStore.Content = updatedPost.Content;
+
+        return NoContent();
+    }
 }
