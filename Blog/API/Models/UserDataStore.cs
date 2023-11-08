@@ -13,6 +13,29 @@ public class UserDataStore
             {
                 Id = 1,
                 FirstName = "Noah",
+                LastName = "Siess"
+            },
+            new UserDto()
+            {
+                Id = 2,
+                FirstName = "Tobias",
+                LastName = "Loacker"
+            },
+            new UserDto()
+            {
+                Id = 3,
+                FirstName = "Adrian",
+                LastName = "Bernhard"
+            }
+        };
+
+        /*
+        Users = new List<UserDto>()
+        {
+            new UserDto()
+            {
+                Id = 1,
+                FirstName = "Noah",
                 LastName = "Siess",
                 Posts = new List<PostDto>()
                 {
@@ -62,5 +85,6 @@ public class UserDataStore
                 LastName = "Bernhard"
             }
         };
+        */
     }
 }

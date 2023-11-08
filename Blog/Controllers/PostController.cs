@@ -10,49 +10,106 @@ public class PostController : ControllerBase
     [HttpGet]
     public ActionResult<IEnumerable<PostDto>> GetPosts()
     {
-        var posts = new LinkedList<PostDto>();
-        var users = UserDataStore.Current.Users;
-
-        foreach (var u in users)
-        {
-            foreach (var p in u.Posts) 
-            {
-                posts.Append(p);
-            }
-        }
+        var allPosts = PostDataStore.Current.Posts;
         
-        return Ok(posts);
+        return Ok(allPosts);
     }
+
     [HttpGet("{userId}")]
     public ActionResult<IEnumerable<PostDto>> GetPosts(int userId)
     {
+        /* get all posts from store */
+        var allPosts = PostDataStore.Current.Posts;
+
+        /* check if user actually exists */
         var user = UserDataStore.Current.Users.FirstOrDefault(u => u.Id == userId);
 
         if (user == null)
             return NotFound();
 
-        return Ok(user.Posts);
+        /* filter posts for user */
+        var posts = allPosts.Where(p => p.AuthorId == user.Id);
+
+        return Ok(posts);
     }
 
     [HttpGet("{userId}/{postId}")]
     public ActionResult<IEnumerable<PostDto>> GetPost(int userId, int postId)
     {
         /*
-         * would probably make sense to have post ids unique across all users,
-         * => then userId is not needed as parameter here
+         * TODO: is there a way to specify which part of query was not found?
          */
 
+        /* get all posts from store */
+        var allPosts = PostDataStore.Current.Posts;
+
+        /* check if user actually exists */
         var user = UserDataStore.Current.Users.FirstOrDefault(u => u.Id == userId);
 
         if (user == null)
             return NotFound();
 
-        // find post
-        var post = user.Posts.FirstOrDefault(p => p.Id == postId);
+        /* filter posts for user */
+        var posts = allPosts.Where(p => p.AuthorId == user.Id);
+
+        /* filter posts for specific post */
+        var post = posts.FirstOrDefault(p => p.Id == postId);
 
         if (post == null)
             return NotFound();
 
         return Ok(post);
+    }
+
+    [HttpPost]
+    public ActionResult<PostDto> CreatePost(int authorId, PostForCreationDto post)
+    {
+        var author = UserDataStore.Current.Users.FirstOrDefault(u => u.Id == authorId);
+
+        if (author == null)
+            return NotFound();
+
+        //var posts = PostDataStore.Current.Posts.Where(p => p.AuthorId == authorId);
+        var maxPostId = PostDataStore.Current.Posts.Count();
+
+        var finalPost = new PostDto()
+        {
+            Id = ++maxPostId,
+            AuthorId = authorId,
+            Title = post.Title,
+            Content = post.Content
+        };
+
+        PostDataStore.Current.Posts.Add(finalPost);
+
+        // TODO check with Stefan
+        return CreatedAtRoute("GetPosts",
+            new
+            {
+                postId = finalPost.Id
+            },
+            finalPost);
+
+        // patchwork solution for now TODO fix later
+        /*
+        var maxPostId = author.Posts.Count;
+
+        var finalPost = new PostDto()
+        {
+            Id = ++maxPostId,
+            Title = post.Title,
+            Content = post.Content,
+            TimeOfCreation = DateTime.Now,
+            Comments = new List<CommentDto>()
+        };
+
+        author.Posts.Add(finalPost);
+
+        return CreatedAtRoute("GetPosts",
+            new
+            {
+                postId = finalPost.Id
+            },
+            finalPost); */
     }
 }
