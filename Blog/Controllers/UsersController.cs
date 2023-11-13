@@ -4,7 +4,7 @@ using Microsoft.AspNetCore.Mvc;
 namespace Blog.Controllers;
 
 [ApiController]
-[Route("api/users")]
+[Route("api/[controller]")]
 public class UsersController : ControllerBase
 {
     [HttpGet]
