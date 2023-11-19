@@ -1,6 +1,8 @@
-﻿using Blog.API.Models;
+﻿using Blog.API.DbContexts;
+using Blog.API.Models;
 using Fusonic.Extensions.MediatR;
 using MediatR;
+using Microsoft.EntityFrameworkCore;
 
 namespace Blog.API.Business.Post;
 
@@ -9,16 +11,19 @@ public record GetPostsForUser(int userId) : IQuery<GetPostsForUser.Result>
     public record Result(IEnumerable<PostDto> Items);
 
     public class Handler : IRequestHandler<GetPostsForUser, Result>
-    { 
-        public Task<Result> Handle(GetPostsForUser request, CancellationToken cancellationToken)
+    {
+        private readonly BlogContext context;
+
+        public Handler(BlogContext context) => this.context = context;
+
+        public async Task<Result> Handle(GetPostsForUser request, CancellationToken cancellationToken)
         {
-            var user = UserDataStore.Current.Users
-                .Single(u => u.Id == request.userId);
+            var user = await context.Users
+                .SingleAsync(x => x.Id == request.userId, cancellationToken);
 
+            var posts = await context.Posts.Where(p => p.AuthorId == user.Id).ToListAsync();
             /* TODO sorting */
-
-            var posts = PostDataStore.Current.Posts.Where(p => p.AuthorId == user.Id);
-            return Task.FromResult(new Result(posts));
+            return new Result(posts.Select(x => new PostDto(x)));
         }
     }
 }

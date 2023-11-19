@@ -19,7 +19,7 @@ public class Post
 
     [Required]
     [MaxLength(256)]
-    public string Content { get; set; }
+    public string? Content { get; set; }
 
     public DateTime TimeOfCreation { get; set; }
 
