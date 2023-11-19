@@ -1,8 +1,8 @@
 ﻿using Blog.API.Business.Post;
 using Blog.API.Models;
 using MediatR;
-using Microsoft.AspNetCore.JsonPatch;
 using Microsoft.AspNetCore.Mvc;
+using System.ComponentModel.DataAnnotations;
 
 namespace Blog.Controllers;
 
@@ -15,6 +15,7 @@ public class PostController : ControllerBase
     public PostController(IMediator mediator) 
         => this.mediator = mediator;
 
+    /* TODO does work but throws swagger error */
     [HttpGet]
     public async Task<GetPosts.Result> GetPosts() 
         => await mediator.Send(new GetPosts());
@@ -23,141 +24,38 @@ public class PostController : ControllerBase
     public async Task<PostDto> GetPostsById(int id)
         => await mediator.Send(new GetPostById(id));
 
-    
-    //[HttpGet]
-    //public ActionResult<IEnumerable<PostDto>> GetPosts()
-    //{
-    //    var allPosts = PostDataStore.Current.Posts;
-        
-    //    return Ok(allPosts);
-    //}
+    /* TODO move into user controller */
+    [HttpGet("{userId}/posts")]
+    public async Task<GetPostsForUser.Result> GetPostsForUser(int userId)
+        => await mediator.Send(new GetPostsForUser(userId));
 
-    //[HttpGet("{userId}", Name = "GetPosts")]
-    //public ActionResult<IEnumerable<PostDto>> GetPosts(int userId)
-    //{
-    //    /* get all posts from store */
-    //    var allPosts = PostDataStore.Current.Posts;
+    [HttpPost("{authorId}")]
+    public async Task<ActionResult<PostDto>> CreatePostAsync(
+        [FromRoute] int authorId, 
+        [FromBody] PostForCreationDto body)
+    {
+        var post = await mediator.Send(new AddPost(authorId, body.Title, body.Content));
 
-    //    /* check if user actually exists */
-    //    var user = UserDataStore.Current.Users.FirstOrDefault(u => u.Id == userId);
+        return Ok(post);
 
-    //    if (user == null)
-    //        return NotFound();
+        /* TODO fix CreatedAtRoute */
 
-    //    /* filter posts for user */
-    //    var posts = allPosts.Where(p => p.AuthorId == user.Id);
+        var route = CreatedAtRoute("GetPostsById",
+            new
+            {
+                post.Id
+            }, post);
 
-    //    return Ok(posts);
-    //}
+        return route;
+    }
 
-    //[HttpGet("{userId}/{postId}")]
-    //public ActionResult<IEnumerable<PostDto>> GetPost(int userId, int postId)
-    //{
-    //    /*
-    //     * TODO: is there a way to specify which part of query was not found?
-    //     */
+    public record UpdatePostTitleModel([MaxLength(50)] string Title);
+    [HttpPost("{postId}/UpdateTitle")]
+    public Task<Unit> UpdatePostTitle(int postId, [FromBody] UpdatePostTitleModel body)
+        => mediator.Send(new UpdatePostTitle(postId, body.Title));
 
-    //    /* get all posts from store */
-    //    var allPosts = PostDataStore.Current.Posts;
-
-    //    /* check if user actually exists */
-    //    var user = UserDataStore.Current.Users.FirstOrDefault(u => u.Id == userId);
-
-    //    if (user == null)
-    //        return NotFound();
-
-    //    /* filter posts for user */
-    //    var posts = allPosts.Where(p => p.AuthorId == user.Id);
-
-    //    /* filter posts for specific post */
-    //    var post = posts.FirstOrDefault(p => p.Id == postId);
-
-    //    if (post == null)
-    //        return NotFound();
-
-    //    return Ok(post);
-    //}
-
-    //[HttpPost]
-    //public ActionResult<PostDto> CreatePost(int authorId, PostForCreationDto post)
-    //{
-    //    var author = UserDataStore.Current.Users.FirstOrDefault(u => u.Id == authorId);
-
-    //    if (author == null)
-    //        return NotFound();
-
-    //    var maxPostId = PostDataStore.Current.Posts.Count;
-
-    //    var finalPost = new PostDto()
-    //    {
-    //        Id = ++maxPostId,
-    //        AuthorId = authorId,
-    //        Title = post.Title,
-    //        Content = post.Content
-    //    };
-
-    //    PostDataStore.Current.Posts.Add(finalPost);
-
-    //    return CreatedAtRoute("GetPosts",
-    //        new
-    //        {
-    //            userId = authorId
-    //        },
-    //        finalPost);
-    //}
-
-    //[HttpPut("{postId}")]
-    //public ActionResult UpdatePost(int postId, PostForUpdateDto updatedPost)
-    //{
-    //    var postFromStore = PostDataStore.Current.Posts.FirstOrDefault(p => p.Id == postId);
-
-    //    if (postFromStore == null)
-    //        return NotFound();
-
-    //    postFromStore.Title = updatedPost.Title;
-    //    postFromStore.Content = updatedPost.Content;
-
-    //    return NoContent();
-    //}
-
-    //[HttpPatch("{postId}")]
-    //public ActionResult PartiallyUpdatePost(int postId, JsonPatchDocument<PostForUpdateDto> patchDocument)
-    //{
-    //    var postFromStore = PostDataStore.Current.Posts.FirstOrDefault(p => p.Id == postId);
-
-    //    if (postFromStore == null)
-    //        return NotFound();
-
-    //    var postToPatch = new PostForUpdateDto()
-    //    {
-    //        Title = postFromStore.Title,
-    //        Content = postFromStore.Content
-    //    };
-
-    //    patchDocument.ApplyTo(postToPatch, ModelState);
-
-    //    if (!ModelState.IsValid)
-    //        return BadRequest(ModelState);
-
-    //    if (!TryValidateModel(postToPatch))
-    //        return BadRequest(ModelState);
-
-    //    postFromStore.Title = postToPatch.Title;
-    //    postFromStore.Content = postToPatch.Content;
-
-    //    return NoContent();
-    //}
-
-    //[HttpDelete("{postId}")]
-    //public ActionResult DeletePost(int postId)
-    //{
-    //    var postFromStore = PostDataStore.Current.Posts.FirstOrDefault(p => p.Id == postId);
-
-    //    if (postFromStore == null)
-    //        return NotFound();
-
-    //    PostDataStore.Current.Posts.Remove(postFromStore);
-
-    //    return NoContent();
-    //}
+    public record UpdatePostContentModel([MaxLength(256)] string Content);
+    [HttpPost("{postId}/UpdateContent")]
+    public Task<Unit> UpdatePostContent(int postId, [FromBody] UpdatePostContentModel body)
+        => mediator.Send(new UpdatePostContent(postId, body.Content));
 }

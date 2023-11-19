@@ -11,8 +11,6 @@ public record GetPosts : IQuery<GetPosts.Result>
     public class Handler : IRequestHandler<GetPosts, Result>
     {
         public Task<Result> Handle(GetPosts request, CancellationToken cancellationToken)
-        {
-            return Task.FromResult(new Result(PostDataStore.Current.Posts));
-        }
+            => Task.FromResult(new Result(PostDataStore.Current.Posts));
     }
 }
