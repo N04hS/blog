@@ -26,6 +26,7 @@ public record AddPost(int AuthorId, string Title, string Content) : ICommand<Pos
                 TimeOfCreation = DateTime.Now
             };
 
+            user.Posts.Add(post);
             await context.SaveChangesAsync(cancellationToken);
             return new PostDto(post);
         }

@@ -2,11 +2,10 @@
 
 namespace Blog.API.Models;
 
-public class PostForCreationDto
+public class CommentForCreationDto
 {
-    [Required(ErrorMessage = "You should provide a name value!")]
-    [MaxLength(100)]
-    public string Title { get; set; } = string.Empty;
+    [Required(ErrorMessage = "You should provide an author id value!")]
+    public int AuthorId { get; set; }
 
     [Required(ErrorMessage = "You should provide a content value!")]
     [MaxLength(256)]

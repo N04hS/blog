@@ -4,7 +4,7 @@ using Fusonic.Extensions.MediatR;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 
-namespace Blog.API.Business;
+namespace Blog.API.Business.Post;
 
 public record GetPostsByUser(int UserId) : IQuery<GetPostsByUser.Result>
 {

@@ -1,4 +1,4 @@
-﻿using Blog.API.Business;
+﻿using Blog.API.Business.Comment;
 using Blog.API.Business.Post;
 using Blog.API.Models;
 using MediatR;
@@ -16,7 +16,6 @@ public class PostController : ControllerBase
     public PostController(IMediator mediator) 
         => this.mediator = mediator;
 
-    /* TODO does work but throws swagger error */
     [HttpGet]
     public async Task<GetPosts.Result> GetPosts() 
         => await mediator.Send(new GetPosts());
@@ -24,11 +23,6 @@ public class PostController : ControllerBase
     [HttpGet("{id}")]
     public async Task<PostDto> GetPostsById(int id)
         => await mediator.Send(new GetPostById(id));
-
-    /* TODO move into user controller */
-    [HttpGet("{userId}/posts")]
-    public async Task<GetPostsByUser.Result> GetPostsForUser(int userId)
-        => await mediator.Send(new GetPostsByUser(userId));
 
     [HttpPost("{authorId}")]
     public async Task<ActionResult<PostDto>> CreatePostAsync(
@@ -40,23 +34,27 @@ public class PostController : ControllerBase
         return Ok(post);
 
         /* TODO fix CreatedAtRoute */
+        //var route = CreatedAtRoute("GetPostsById",
+        //    new
+        //    {
+        //        post.Id
+        //    }, post);
 
-        var route = CreatedAtRoute("GetPostsById",
-            new
-            {
-                post.Id
-            }, post);
-
-        return route;
+        //return route;
     }
 
     public record UpdatePostTitleModel([MaxLength(50)] string Title);
-    [HttpPost("{postId}/UpdateTitle")]
-    public Task<Unit> UpdatePostTitle(int postId, [FromBody] UpdatePostTitleModel body)
-        => mediator.Send(new UpdatePostTitle(postId, body.Title));
+    [HttpPost("{id}/UpdateTitle")]
+    public Task<Unit> UpdatePostTitle(int id, [FromBody] UpdatePostTitleModel body)
+        => mediator.Send(new UpdatePostTitle(id, body.Title));
 
     public record UpdatePostContentModel([MaxLength(256)] string Content);
-    [HttpPost("{postId}/UpdateContent")]
-    public Task<Unit> UpdatePostContent(int postId, [FromBody] UpdatePostContentModel body)
-        => mediator.Send(new UpdatePostContent(postId, body.Content));
+    [HttpPost("{id}/UpdateContent")]
+    public Task<Unit> UpdatePostContent(int id, [FromBody] UpdatePostContentModel body)
+        => mediator.Send(new UpdatePostContent(id, body.Content));
+
+    [HttpGet("{id}/Comments")]
+    public Task<GetCommentsByPost.Result> GetCommentsByPost(int id)
+        => mediator.Send(new GetCommentsByPost(id));
+
 }

@@ -14,6 +14,7 @@ public class CommentDto
     {
         Id = comment.Id;
         AuthorId = comment.AuthorId;
+        PostId = comment.PostId;
         Content = comment.Content;
         TimeOfCreation = comment.TimeOfCreation;
     }

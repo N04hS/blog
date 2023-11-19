@@ -1,6 +1,5 @@
 ﻿using Fusonic.Extensions.MediatR;
 using MediatR;
-using Blog.API.Models;
 using Blog.API.DbContexts;
 using Microsoft.EntityFrameworkCore;
 

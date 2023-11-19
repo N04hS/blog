@@ -1,5 +1,9 @@
-﻿using Blog.API.Models;
+﻿using Blog.API.Business.Comment;
+using Blog.API.Business.Post;
+using Blog.API.Models;
+using MediatR;
 using Microsoft.AspNetCore.Mvc;
+using System.ComponentModel.DataAnnotations;
 
 namespace Blog.Controllers;
 
@@ -7,20 +11,32 @@ namespace Blog.Controllers;
 [Route("api/[controller]")]
 public class CommentController : ControllerBase
 {
+    private readonly IMediator mediator;
+
+    public CommentController(IMediator mediator) 
+        => this.mediator = mediator;
+
     [HttpGet]
-    public ActionResult<IEnumerable<CommentDto>> GetComments()
+    public async Task<GetComments.Result> GetComments()
+        => await mediator.Send(new GetComments());
+
+    [HttpGet("{id}")]
+    public async Task<CommentDto> GetCommentById(int id)
+        => await mediator.Send(new GetCommentById(id));
+
+    [HttpPost("{postId}")]
+    public async Task<ActionResult<CommentDto>> CreateCommentAsync(
+        [FromRoute] int postId,
+        [FromBody] CommentForCreationDto body)
     {
-        return Ok(CommentDataStore.Current.Comments);
+        var comment = await mediator.Send(new AddComment(postId, body.AuthorId, body.Content));
+
+        return Ok(comment);
+        /* TODO add CreatedAtRoute (see PostController) */
     }
 
-    [HttpGet("id")]
-    public ActionResult<IEnumerable<CommentDto>> GetCommentById(int id)
-    {
-        var result = CommentDataStore.Current.Comments.FirstOrDefault(c => c.Id == id);
-
-        if (result == null)
-            return NotFound();
-
-        return Ok(result);
-    }
+    public record UpdateCommentContent([MaxLength(256)] string Content);
+    [HttpPost("{id}/Update")]
+    public Task<Unit> UpdateComment(int id, [FromBody] UpdateCommentContent body)
+        => mediator.Send(new UpdateComment(id, body.Content));
 }
