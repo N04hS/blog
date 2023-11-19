@@ -1,4 +1,5 @@
-﻿using Blog.API.Business.Post;
+﻿using Blog.API.Business;
+using Blog.API.Business.Post;
 using Blog.API.Models;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
@@ -26,8 +27,8 @@ public class PostController : ControllerBase
 
     /* TODO move into user controller */
     [HttpGet("{userId}/posts")]
-    public async Task<GetPostsForUser.Result> GetPostsForUser(int userId)
-        => await mediator.Send(new GetPostsForUser(userId));
+    public async Task<GetPostsByUser.Result> GetPostsForUser(int userId)
+        => await mediator.Send(new GetPostsByUser(userId));
 
     [HttpPost("{authorId}")]
     public async Task<ActionResult<PostDto>> CreatePostAsync(

@@ -18,6 +18,9 @@ public record GetPosts : IQuery<GetPosts.Result>
         public Handler(BlogContext context) => this.context = context;
 
         public async Task<Result> Handle(GetPosts request, CancellationToken cancellationToken)
-            => new Result(await context.Posts.Select(x => new PostDto(x)).ToListAsync(cancellationToken));
+            => new Result(
+                await context.Posts
+                .Select(x => new PostDto(x))
+                .ToListAsync(cancellationToken));
     }
 }

@@ -23,6 +23,9 @@ public class Post
 
     public DateTime TimeOfCreation { get; set; }
 
+    public ICollection<Comment> Comments { get; set; }
+        = new List<Comment>();
+
     public Post(string title)
     {
         Title = title;

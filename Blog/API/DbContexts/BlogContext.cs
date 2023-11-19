@@ -17,6 +17,8 @@ public class BlogContext : DbContext
          * add-migration "MigrationName"
          * update-database
          */
+
+        modelBuilder.Entity<User>().Navigation(x => x.Posts).AutoInclude();
         modelBuilder.Entity<User>()
             .HasData(
             new User("Noah", "Siess")
@@ -44,6 +46,7 @@ public class BlogContext : DbContext
                 Id = 6
             });
 
+        modelBuilder.Entity<Post>().Navigation(x => x.Comments).AutoInclude();
         modelBuilder.Entity<Post>()
             .HasData(
             new Post("Feilhauer Prüfung")
