@@ -1,5 +1,4 @@
 ﻿using Blog.API.Business.Comment;
-using Blog.API.Business.Post;
 using Blog.API.Models;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
