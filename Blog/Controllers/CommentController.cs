@@ -36,7 +36,6 @@ public class CommentController : ControllerBase
             {
                 comment.Id
             }, comment);
-        /* TODO add CreatedAtRoute (see PostController) */
     }
 
     public record UpdateCommentContent([MaxLength(256)] string Content);
