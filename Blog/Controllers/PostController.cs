@@ -29,7 +29,8 @@ public class PostController : ControllerBase
         [FromRoute] int authorId, 
         [FromBody] PostForCreationDto body)
     {
-        var post = await mediator.Send(new AddPost(authorId, body.Title, body.Content));
+        // TODO change
+        var post = await mediator.Send(new AddPost("Noah Siess"/*authorId*/, body.Title, body.Content));
 
         var route = CreatedAtRoute("GetPostById",
             new

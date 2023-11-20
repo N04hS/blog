@@ -28,7 +28,8 @@ public class CommentController : ControllerBase
         [FromRoute] int postId,
         [FromBody] CommentForCreationDto body)
     {
-        var comment = await mediator.Send(new AddComment(postId, body.AuthorId, body.Content));
+        // TODO change
+        var comment = await mediator.Send(new AddComment(postId, "Noah Siess"/*body.AuthorI*/, body.Content));
 
         return CreatedAtRoute("GetCommentById",
             new

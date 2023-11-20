@@ -3,6 +3,7 @@ using System;
 using Blog.API.DbContexts;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -10,9 +11,10 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Blog.Migrations
 {
     [DbContext(typeof(BlogContext))]
-    partial class BlogContextModelSnapshot : ModelSnapshot
+    [Migration("20231120134702_RemovedUser")]
+    partial class RemovedUser
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder.HasAnnotation("ProductVersion", "6.0.0");
@@ -116,6 +118,65 @@ namespace Blog.Migrations
                             Content = "Lorem ipsum",
                             TimeOfCreation = new DateTime(2023, 7, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             Title = "Tobias' Post"
+                        });
+                });
+
+            modelBuilder.Entity("Blog.API.Entities.User", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("INTEGER");
+
+                    b.Property<string>("FirstName")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("LastName")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("TEXT");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("User");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            FirstName = "Noah",
+                            LastName = "Siess"
+                        },
+                        new
+                        {
+                            Id = 2,
+                            FirstName = "Tobias",
+                            LastName = "Loacker"
+                        },
+                        new
+                        {
+                            Id = 3,
+                            FirstName = "Adrian",
+                            LastName = "Bernhard"
+                        },
+                        new
+                        {
+                            Id = 4,
+                            FirstName = "Reinhold",
+                            LastName = "Messner"
+                        },
+                        new
+                        {
+                            Id = 5,
+                            FirstName = "Thomas",
+                            LastName = "Feilhauer"
+                        },
+                        new
+                        {
+                            Id = 6,
+                            FirstName = "Deniz",
+                            LastName = "Frick"
                         });
                 });
 

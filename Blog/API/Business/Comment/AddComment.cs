@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Blog.API.Business.Comment;
 
-public record AddComment(int PostId, int AuthorId, string content) : ICommand<CommentDto>
+public record AddComment(int PostId, string AuthorName, string content) : ICommand<CommentDto>
 {
     public class Handler : IRequestHandler<AddComment, CommentDto>
     {
@@ -16,13 +16,12 @@ public record AddComment(int PostId, int AuthorId, string content) : ICommand<Co
 
         public async Task<CommentDto> Handle(AddComment request, CancellationToken cancellationToken)
         {
-            var user = await context.Users.SingleAsync(x => x.Id == request.AuthorId, cancellationToken);
-
-            var post = await context.Posts.SingleAsync(x => x.Id == request.PostId, cancellationToken);
+            var post = await context.Posts
+                .SingleAsync(x => x.Id == request.PostId, cancellationToken);
 
             var comment = new Entities.Comment(request.content)
             {
-                AuthorId = user.Id,
+                Author = request.AuthorName,
                 PostId = post.Id,
                 TimeOfCreation = DateTime.Now
             };

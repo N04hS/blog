@@ -1,5 +1,4 @@
 ﻿using Blog.API.Entities;
-using System.Reflection;
 
 namespace Blog.API.Models;
 
@@ -13,14 +12,15 @@ public class CommentDto
     public CommentDto(Comment comment)
     {
         Id = comment.Id;
-        AuthorId = comment.AuthorId;
+        Author = comment.Author;
         PostId = comment.PostId;
         Content = comment.Content;
         TimeOfCreation = comment.TimeOfCreation;
     }
 
     public int Id { get; set; }
-    public int AuthorId { get; set; }
+    public string Author { get; set; }
+        = string.Empty;
     public int PostId { get; set; }
     public DateTime TimeOfCreation { get; /*set;*/ }
     public string Content { get; set; } = string.Empty;

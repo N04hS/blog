@@ -12,7 +12,7 @@ public class PostDto
     public PostDto(Post post)
     {
         Id = post.Id;
-        AuthorId = post.AuthorId;
+        Author = post.Author;
         Title = post.Title;
         Content = post.Content!;
         TimeOfCreation = post.TimeOfCreation;
@@ -22,7 +22,8 @@ public class PostDto
     }
 
     public int Id { get; set; }
-    public int AuthorId { get; set; }
+    public string Author { get; set; }
+        = string.Empty;
     public string Title { get; set; }
         = string.Empty;
     public string Content { get; set; } 
