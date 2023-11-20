@@ -7,17 +7,24 @@ namespace Blog.Controllers;
 [Route("api/[controller]")]
 public class UsersController : ControllerBase
 {
-    [HttpGet]
-    public ActionResult<IEnumerable<UserDto>> GetUsers()
+    private readonly IMediator mediator;
+
+    public UsersController(IMediator mediator)
     {
-        return Ok(UserDataStore.Current.Users);
+        this.mediator = mediator;
+    }
+
+    [HttpGet]
+    public async Task<ActionResult<IEnumerable<UserDto>>> GetUsers()
+    {
+        var result = await mediator.Send(new GetUsers());
+        return Ok(result);
     }
 
     [HttpGet("{id}")]
-    public ActionResult<IEnumerable<UserDto>> GetUserById(int id)
+    public async Task<ActionResult<UserDto>> GetUserById(int id)
     {
-        var result =
-            UserDataStore.Current.Users.FirstOrDefault(x => x.Id == id);
+        var result = await mediator.Send(new GetUserById(id));
 
         if (result == null)
             return NotFound();
@@ -25,3 +32,4 @@ public class UsersController : ControllerBase
         return Ok(result);
     }
 }
+
