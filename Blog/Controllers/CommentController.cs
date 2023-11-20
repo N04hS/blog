@@ -20,7 +20,7 @@ public class CommentController : ControllerBase
     public async Task<GetComments.Result> GetComments()
         => await mediator.Send(new GetComments());
 
-    [HttpGet("{id}")]
+    [HttpGet("{id}", Name = "GetCommentById")]
     public async Task<CommentDto> GetCommentById(int id)
         => await mediator.Send(new GetCommentById(id));
 
@@ -31,7 +31,11 @@ public class CommentController : ControllerBase
     {
         var comment = await mediator.Send(new AddComment(postId, body.AuthorId, body.Content));
 
-        return Ok(comment);
+        return CreatedAtRoute("GetCommentById",
+            new
+            {
+                comment.Id
+            }, comment);
         /* TODO add CreatedAtRoute (see PostController) */
     }
 

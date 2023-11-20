@@ -20,7 +20,7 @@ public class PostController : ControllerBase
     public async Task<GetPosts.Result> GetPosts() 
         => await mediator.Send(new GetPosts());
 
-    [HttpGet("{id}")]
+    [HttpGet("{id}", Name = "GetPostById")]
     public async Task<PostDto> GetPostsById(int id)
         => await mediator.Send(new GetPostById(id));
 
@@ -31,16 +31,13 @@ public class PostController : ControllerBase
     {
         var post = await mediator.Send(new AddPost(authorId, body.Title, body.Content));
 
-        return Ok(post);
+        var route = CreatedAtRoute("GetPostById",
+            new
+            {
+                post.Id
+            }, post);
 
-        /* TODO fix CreatedAtRoute */
-        //var route = CreatedAtRoute("GetPostsById",
-        //    new
-        //    {
-        //        post.Id
-        //    }, post);
-
-        //return route;
+        return route;
     }
 
     public record UpdatePostTitleModel([MaxLength(50)] string Title);
