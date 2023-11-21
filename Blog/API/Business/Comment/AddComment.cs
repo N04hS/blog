@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Blog.API.Business.Comment;
 
-public record AddComment(int PostId, string AuthorName, string content) : ICommand<CommentDto>
+public record AddComment(int PostId, string AuthorName, string Content) : ICommand<CommentDto>
 {
     public class Handler : IRequestHandler<AddComment, CommentDto>
     {
@@ -19,7 +19,7 @@ public record AddComment(int PostId, string AuthorName, string content) : IComma
             var post = await context.Posts
                 .SingleAsync(x => x.Id == request.PostId, cancellationToken);
 
-            var comment = new Entities.Comment(request.content)
+            var comment = new Entities.Comment(request.Content)
             {
                 Author = request.AuthorName,
                 PostId = post.Id,

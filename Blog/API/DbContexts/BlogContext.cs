@@ -1,9 +1,10 @@
 ﻿using Blog.API.Entities;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 
 namespace Blog.API.DbContexts;
 
-public class BlogContext : DbContext
+public class BlogContext : IdentityDbContext<User>
 {
     public DbSet<Post> Posts { get; set; } = null!;
     public DbSet<Comment> Comments { get; set; } = null!;
@@ -17,7 +18,6 @@ public class BlogContext : DbContext
          * update-database
          */
 
-        modelBuilder.Entity<Post>().Navigation(x => x.Comments).AutoInclude();
         modelBuilder.Entity<Post>()
             .HasData(
             new Post("Feilhauer Prüfung")
@@ -60,5 +60,6 @@ public class BlogContext : DbContext
             });
 
         base.OnModelCreating(modelBuilder);
+        modelBuilder.Entity<Post>().Navigation(x => x.Comments).AutoInclude();
     }
 }

@@ -1,23 +1,11 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using Microsoft.AspNetCore.Identity;
+using System.ComponentModel.DataAnnotations;
 
 namespace Blog.API.Entities;
 
-public class User
+public class User : IdentityUser
 {
-    public int Id { get; set; }
+    public string? FirstName { get; set; }
 
-    [Required]
-    [MaxLength(50)]
-    public string FirstName { get; set; }
-
-    [Required]
-    [MaxLength(50)]
-    public string LastName { get; set; }
-
-    public User(string firstName, string lastName)
-    {
-        FirstName = firstName;
-        LastName = lastName;
-    }
-
+    public string? LastName { get; set; }
 }
