@@ -2,6 +2,7 @@
 using Blog.API.Business.Post;
 using Blog.API.Models;
 using MediatR;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.ComponentModel.DataAnnotations;
 
@@ -41,18 +42,25 @@ public class PostController : ControllerBase
         return route;
     }
 
+    [Authorize]
     public record UpdatePostTitleModel([MaxLength(50)] string Title);
     [HttpPost("{id}/UpdateTitle")]
     public Task<Unit> UpdatePostTitle(int id, [FromBody] UpdatePostTitleModel body)
         => mediator.Send(new UpdatePostTitle(id, body.Title));
 
+    [Authorize]
     public record UpdatePostContentModel([MaxLength(256)] string Content);
     [HttpPost("{id}/UpdateContent")]
     public Task<Unit> UpdatePostContent(int id, [FromBody] UpdatePostContentModel body)
         => mediator.Send(new UpdatePostContent(id, body.Content));
 
+    [Authorize]
     [HttpGet("{id}/Comments")]
     public Task<GetCommentsByPost.Result> GetCommentsByPost(int id)
         => mediator.Send(new GetCommentsByPost(id));
+
+    [HttpGet("{id}/CommentNumber")]
+    public Task<int> GetCommentCountByPost(int id)
+        => mediator.Send(new GetCommentCountByPost(id));
 
 }

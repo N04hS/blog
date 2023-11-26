@@ -1,6 +1,7 @@
 ﻿using Blog.API.Business.Comment;
 using Blog.API.Models;
 using MediatR;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.ComponentModel.DataAnnotations;
 
@@ -28,8 +29,7 @@ public class CommentController : ControllerBase
         [FromRoute] int postId,
         [FromBody] CommentForCreationDto body)
     {
-        // TODO change
-        var comment = await mediator.Send(new AddComment(postId, "Noah Siess"/*body.AuthorI*/, body.Content));
+        var comment = await mediator.Send(new AddComment(postId, body.AuthorName, body.Content));
 
         return CreatedAtRoute("GetCommentById",
             new
@@ -38,6 +38,7 @@ public class CommentController : ControllerBase
             }, comment);
     }
 
+    [Authorize]
     public record UpdateCommentContent([MaxLength(256)] string Content);
     [HttpPost("{id}/Update")]
     public Task<Unit> UpdateComment(int id, [FromBody] UpdateCommentContent body)
